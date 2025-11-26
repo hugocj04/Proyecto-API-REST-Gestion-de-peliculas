@@ -3,6 +3,7 @@ package com.gestionpeliculas.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,5 +17,5 @@ public class Actor {
     private String nombre;
 
     @ManyToMany(mappedBy = "actores")
-    private List<Pelicula> peliculas;
+    private List<Pelicula> peliculas = new ArrayList<>();
 }

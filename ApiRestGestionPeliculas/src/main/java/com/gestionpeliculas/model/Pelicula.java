@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ public class Pelicula {
     private String genero;
     private LocalDate fechaEstreno;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "director_id")
     private Director director;
 
@@ -28,5 +29,16 @@ public class Pelicula {
             joinColumns = @JoinColumn(name = "pelicula_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
-    private List<Actor> actores;
+
+    private List<Actor> actores = new ArrayList<>();
+
+    public void addActor(Actor actor) {
+        this.actores.add(actor);
+        actor.getPeliculas().add(this);
+    }
+
+    public void removeActor(Actor actor) {
+        this.actores.remove(actor);
+        actor.getPeliculas().remove(this);
+    }
 }
