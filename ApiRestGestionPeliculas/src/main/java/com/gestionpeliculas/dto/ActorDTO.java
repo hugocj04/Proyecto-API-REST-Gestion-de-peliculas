@@ -1,11 +1,6 @@
 package com.gestionpeliculas.dto;
 
-import lombok.Data;
-
-@Data
-public class ActorDTO {
-
-    private Long id;
-    private String nombre;
-
-}
+public record ActorDTO(
+        Long id,
+        String nombre
+) {}

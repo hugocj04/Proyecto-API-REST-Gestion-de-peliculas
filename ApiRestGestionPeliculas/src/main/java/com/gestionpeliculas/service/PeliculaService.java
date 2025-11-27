@@ -4,6 +4,10 @@ import com.gestionpeliculas.dto.ActorDTO;
 import com.gestionpeliculas.dto.DirectorDTO;
 import com.gestionpeliculas.dto.PeliculaRequestDTO;
 import com.gestionpeliculas.dto.PeliculaResponseDTO;
+import com.gestionpeliculas.exception.ActorYaEnRepartoException;
+import com.gestionpeliculas.exception.DirectorMenorEdadException;
+import com.gestionpeliculas.exception.EntidadNoEncontradaException;
+import com.gestionpeliculas.exception.PeliculaYaExisteException;
 import com.gestionpeliculas.model.Actor;
 import com.gestionpeliculas.model.Director;
 import com.gestionpeliculas.model.Pelicula;
@@ -40,21 +44,21 @@ public class PeliculaService {
     public PeliculaResponseDTO create(PeliculaRequestDTO peliculaRequestDTO) {
         int edadDirector;
         Pelicula pelicula = new Pelicula();
-        if (peliculaRepository.existsByTitulo(peliculaRequestDTO.getTitulo())) {
+        if (peliculaRepository.existsByTitulo(peliculaRequestDTO.titulo())) {
             throw new PeliculaYaExisteException("Ya existe una pelicula con ese titulo");
         }
 
-        Director director = directorRepository.findById(peliculaRequestDTO.getDirectorId())
+        Director director = directorRepository.findById(peliculaRequestDTO.directorId())
                 .orElseThrow(() -> new EntidadNoEncontradaException("Director no encontrado"));
 
-        edadDirector = peliculaRequestDTO.getFechaEstreno().getYear() - director.getAnioNacimiento();
+        edadDirector = peliculaRequestDTO.fechaEstreno().getYear() - director.getAnioNacimiento();
         if (edadDirector < 18) {
             throw new DirectorMenorEdadException("El director era menor de edad cuando se estreno la pelicula");
         }
 
-        pelicula.setTitulo(peliculaRequestDTO.getTitulo());
-        pelicula.setGenero(peliculaRequestDTO.getGenero());
-        pelicula.setFechaEstreno(peliculaRequestDTO.getFechaEstreno());
+        pelicula.setTitulo(peliculaRequestDTO.titulo());
+        pelicula.setGenero(peliculaRequestDTO.genero());
+        pelicula.setFechaEstreno(peliculaRequestDTO.fechaEstreno());
         pelicula.setDirector(director);
 
         Pelicula savedPelicula = peliculaRepository.save(pelicula);
@@ -65,23 +69,24 @@ public class PeliculaService {
     public PeliculaResponseDTO update(Long id, PeliculaRequestDTO peliculaRequestDTO) {
         int edadDirector;
         Pelicula pelicula = peliculaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Pelicula no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Pelicula no encontrada"));
 
-        if (!pelicula.getTitulo().equals(peliculaRequestDTO.getTitulo()) && peliculaRepository.existsByTitulo(peliculaRequestDTO.getTitulo())) {
+        if (!pelicula.getTitulo().equals(peliculaRequestDTO.titulo()) &&
+                peliculaRepository.existsByTitulo(peliculaRequestDTO.titulo())) {
             throw new PeliculaYaExisteException("Ya existe una pelicula con ese titulo");
         }
 
-        Director director = directorRepository.findById(peliculaRequestDTO.getDirectorId())
+        Director director = directorRepository.findById(peliculaRequestDTO.directorId())
                 .orElseThrow(() -> new EntidadNoEncontradaException("Director no encontrado"));
 
-        edadDirector = peliculaRequestDTO.getFechaEstreno().getYear() - director.getAnioNacimiento();
+        edadDirector = peliculaRequestDTO.fechaEstreno().getYear() - director.getAnioNacimiento();
         if (edadDirector < 18) {
             throw new DirectorMenorEdadException("El director era menor de edad cuando se estrenó la");
         }
 
-        pelicula.setTitulo(peliculaRequestDTO.getTitulo());
-        pelicula.setGenero(peliculaRequestDTO.getGenero());
-        pelicula.setFechaEstreno(peliculaRequestDTO.getFechaEstreno());
+        pelicula.setTitulo(peliculaRequestDTO.titulo());
+        pelicula.setGenero(peliculaRequestDTO.genero());
+        pelicula.setFechaEstreno(peliculaRequestDTO.fechaEstreno());
         pelicula.setDirector(director);
 
         Pelicula updatedPelicula = peliculaRepository.save(pelicula);
@@ -104,36 +109,31 @@ public class PeliculaService {
                 .orElseThrow(() -> new EntidadNoEncontradaException("Actor no encontrado"));
 
         if (pelicula.getActores().contains(actor)) {
-            throw new ActorYaEnRepartoExcepction("El actor ya está en el reparto de esta pelicula");
+            throw new ActorYaEnRepartoException("El actor ya está en el reparto de esta pelicula");
         }
 
         pelicula.addActor(actor);
         peliculaRepository.save(pelicula);
     }
 
-    public PeliculaResponseDTO convertToResponseDTO(Pelicula pelicula) {
-        PeliculaResponseDTO dto = new PeliculaResponseDTO();
-        dto.setId(pelicula.getId());
-        dto.setTitulo(pelicula.getTitulo());
-        dto.setGenero(pelicula.getGenero());
-        dto.setFechaEstreno(pelicula.getFechaEstreno());
-
-        DirectorDTO directorDTO = new DirectorDTO();
-        directorDTO.setId(pelicula.getDirector().getId());
-        directorDTO.setNombre(pelicula.getDirector().getNombre());
-        directorDTO.setAnioNacimiento(pelicula.getDirector().getAnioNacimiento());
-        dto.setDirector(directorDTO);
+    private PeliculaResponseDTO convertToResponseDTO(Pelicula pelicula) {
+        DirectorDTO directorDTO = new DirectorDTO(
+                pelicula.getDirector().getId(),
+                pelicula.getDirector().getNombre(),
+                pelicula.getDirector().getAnioNacimiento()
+        );
 
         List<ActorDTO> actoresDTO = pelicula.getActores().stream()
-            .map(actor -> {
-                ActorDTO actorDTO = new ActorDTO();
-                actorDTO.setId(actor.getId());
-                actorDTO.setNombre(actor.getNombre());
-                return actorDTO;
-            })
-            .toList();
-        dto.setActores(actoresDTO);
+                .map(actor -> new ActorDTO(actor.getId(), actor.getNombre()))
+                .toList();
 
-        return dto;
+        return new PeliculaResponseDTO(
+                pelicula.getId(),
+                pelicula.getTitulo(),
+                pelicula.getGenero(),
+                pelicula.getFechaEstreno(),
+                directorDTO,
+                actoresDTO
+        );
     }
 }

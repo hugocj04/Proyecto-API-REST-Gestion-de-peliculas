@@ -1,13 +1,12 @@
 package com.gestionpeliculas.service;
 
 import com.gestionpeliculas.dto.DirectorDTO;
+import com.gestionpeliculas.exception.EntidadNoEncontradaException;
 import com.gestionpeliculas.model.Director;
 import com.gestionpeliculas.repository.DirectorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,8 @@ public class DirectorService {
 
     public DirectorDTO create(DirectorDTO directorDTO) {
         Director director = new Director();
-        director.setNombre(directorDTO.getNombre());
-        director.setAnioNacimiento(directorDTO.getAnioNacimiento());
+        director.setNombre(directorDTO.nombre());
+        director.setAnioNacimiento(directorDTO.anioNacimiento());
 
         Director savedDirector = directorRepository.save(director);
         return convertToDTO(savedDirector);
@@ -40,8 +39,8 @@ public class DirectorService {
         Director director = directorRepository.findById(id)
                 .orElseThrow(() -> new EntidadNoEncontradaException("Director no encontrado"));
 
-        director.setNombre(directorDTO.getNombre());
-        director.setAnioNacimiento(directorDTO.getAnioNacimiento());
+        director.setNombre(directorDTO.nombre());
+        director.setAnioNacimiento(directorDTO.anioNacimiento());
 
         Director updatedDirector = directorRepository.save(director);
         return convertToDTO(updatedDirector);
@@ -55,11 +54,7 @@ public class DirectorService {
         directorRepository.deleteById(id);
     }
 
-    public DirectorDTO convertToDTO(Director director) {
-        DirectorDTO dto = new DirectorDTO();
-        dto.setId(director.getId());
-        dto.setNombre(director.getNombre());
-        dto.setAnioNacimiento(director.getAnioNacimiento());
-        return dto;
+    private DirectorDTO convertToDTO(Director director) {
+        return new DirectorDTO(director.getId(), director.getNombre(), director.getAnioNacimiento());
     }
 }

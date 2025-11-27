@@ -3,7 +3,6 @@ package com.gestionpeliculas.service;
 import com.gestionpeliculas.dto.ActorDTO;
 import com.gestionpeliculas.model.Actor;
 import com.gestionpeliculas.repository.ActorRepository;
-import com.gestionpeliculas.repository.PeliculaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,17 +29,13 @@ public class ActorService {
 
     public ActorDTO create(ActorDTO actorDTO) {
         Actor actor = new Actor();
-        actor.setNombre(actorDTO.getNombre());
+        actor.setNombre(actorDTO.nombre());
 
         Actor savedActor = actorRepository.save(actor);
         return convertToDTO(savedActor);
     }
 
-    public ActorDTO convertToDTO(Actor actor) {
-        ActorDTO dto = new ActorDTO();
-        dto.setId(actor.getId());
-        dto.setNombre(actor.getNombre());
-
-        return dto;
+    private ActorDTO convertToDTO(Actor actor) {
+        return new ActorDTO(actor.getId(), actor.getNombre());
     }
 }
