@@ -14,81 +14,67 @@ Una API REST completa desarrollada con Spring Boot para gestionar un catálogo d
 mvn spring-boot:run
 ```
 
-Aplicación Disponible
+## URLs de la Aplicación
 
-La aplicación estará disponible en:
-http://localhost:9000
+- La aplicación estará disponible en: http://localhost:9000
 
-URLs de Acceso
+### Rutas de Acceso
 
-API Principal: http://localhost:9000/api/v1
+- API Principal: http://localhost:9000/api/v1
+- Documentación Swagger: http://localhost:9000/swagger-ui.html
+- Consola H2: http://localhost:9000/h2-console
 
-Documentación Swagger: http://localhost:9000/swagger-ui.html
+---
 
-Consola H2: http://localhost:9000/h2-console
+## Endpoints Disponibles
 
-Endpoints Disponibles
-Directores
+### Directores
+- GET /api/v1/directores - Listar todos los directores
+- GET /api/v1/directores/{id} - Obtener director por ID
+- POST /api/v1/directores - Crear nuevo director
+- PUT /api/v1/directores/{id} - Actualizar director
+- DELETE /api/v1/directores/{id} - Eliminar director
 
-GET /api/v1/directores — Listar todos los directores
+### Actores
+- GET /api/v1/actores - Listar todos los actores
+- POST /api/v1/actores - Crear nuevo actor
 
-GET /api/v1/directores/{id} — Obtener director por ID
+### Películas
+- GET /api/v1/peliculas - Listar todas las películas
+- GET /api/v1/peliculas/{id} - Obtener película con reparto
+- POST /api/v1/peliculas - Crear nueva película
+- PUT /api/v1/peliculas/{id} - Actualizar película
+- DELETE /api/v1/peliculas/{id} - Eliminar película
+- POST /api/v1/peliculas/{id}/actores/{actorId} - Asignar actor a película
 
-POST /api/v1/directores — Crear nuevo director
+---
 
-PUT /api/v1/directores/{id} — Actualizar director
+## Base de Datos
 
-DELETE /api/v1/directores/{id} — Eliminar director
+### H2 Database
 
-Actores
+- JDBC URL: jdbc:h2:mem:testdb
+- Usuario: sa
+- Contraseña: (vacía)
+- Nota: los datos se pierden al reiniciar la aplicación.
 
-GET /api/v1/actores — Listar todos los actores
+---
 
-POST /api/v1/actores — Crear nuevo actor
+## Tecnologías Utilizadas
 
-Películas
+- Java 17
+- Spring Boot 3.x
+- Spring Data JPA
+- H2 Database
+- OpenAPI 3.0 + Swagger
+- Maven
+- Lombok
 
-GET /api/v1/peliculas — Listar todas las películas
+---
 
-GET /api/v1/peliculas/{id} — Obtener película con reparto
+## Estructura del Proyecto
 
-POST /api/v1/peliculas — Crear nueva película
-
-PUT /api/v1/peliculas/{id} — Actualizar película
-
-DELETE /api/v1/peliculas/{id} — Eliminar película
-
-POST /api/v1/peliculas/{id}/actores/{actorId} — Asignar actor a película
-
-Base de Datos
-
-H2 Database en memoria
-
-JDBC URL: jdbc:h2:mem:testdb
-
-Usuario: sa
-
-Contraseña: (vacía)
-
-ℹ️ Los datos se pierden al reiniciar la aplicación.
-
-Tecnologías Usadas
-
-Java 17
-
-Spring Boot 3.x
-
-Spring Data JPA
-
-H2 Database
-
-OpenAPI 3.0 + Swagger
-
-Maven
-
-Lombok
-
-Estructura del Proyecto
+```text
 gestion-peliculas/
 ├── src/
 │   └── main/
@@ -106,9 +92,15 @@ gestion-peliculas/
 ├── postman/
 │   └── GestionPeliculas.postman_collection.json
 └── README.md
+```
 
-Ejemplos de Uso
-Crear Director
+---
+
+## Ejemplos de Uso
+
+### Crear Director
+
+```bash
 POST http://localhost:9000/api/v1/directores
 Content-Type: application/json
 
@@ -116,8 +108,11 @@ Content-Type: application/json
   "nombre": "Christopher Nolan",
   "anioNacimiento": 1970
 }
+```
 
-Crear Película
+### Crear Película
+
+```bash
 POST http://localhost:9000/api/v1/peliculas
 Content-Type: application/json
 
@@ -127,18 +122,19 @@ Content-Type: application/json
   "fechaEstreno": "2010-07-16",
   "directorId": 1
 }
+```
 
-Gestión de Errores
+---
 
-La API utiliza ProblemDetail para respuestas de error estandarizadas:
+## Gestión de Errores
 
-400 Bad Request — Datos inválidos
+- 400 Bad Request - Datos inválidos
+- 404 Not Found - Recurso no encontrado
+- 409 Conflict - Violación de reglas de negocio
 
-404 Not Found — Recurso no encontrado
+### Ejemplo
 
-409 Conflict — Violación de reglas de negocio
-
-Ejemplo de Error
+```json
 {
   "type": "about:blank",
   "title": "Entidad No Encontrada",
@@ -146,20 +142,20 @@ Ejemplo de Error
   "detail": "Película no encontrada",
   "instance": "/api/v1/peliculas/999"
 }
+```
 
-Colección Postman
+---
 
-Incluida en:
-postman/GestionPeliculas.postman_collection.json
+## Colección Postman
 
-Orden de Pruebas Recomendado
+- Incluida en: postman/GestionPeliculas.postman_collection.json
 
-Crear directores
+---
 
-Crear actores
+## Orden de Pruebas Recomendado
 
-Crear películas
-
-Asignar actores a películas
-
-Probar casos de error
+- Crear directores
+- Crear actores
+- Crear películas
+- Asignar actores a películas
+- Probar casos de error
