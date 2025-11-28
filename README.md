@@ -2,12 +2,55 @@
 
 Una API REST completa desarrollada con Spring Boot para gestionar un catálogo de películas, directores y actores.
 
-## Inicio Rápido
+## Estructura del Proyecto
 
-### Prerrequisitos
-- Java 17 o superior
-- Maven 3.6+
-- Postman (recomendado)
+```
+ApiRestGestionPeliculas/
+├── src/
+│   └── main/
+│       ├── java/
+│       │   └── com/
+│       │       └── gestionpeliculas/
+│       │           ├── controller/
+│       │           │   ├── ActorController.java
+│       │           │   ├── DirectorController.java
+│       │           │   └── PeliculaController.java
+│       │           ├── service/
+│       │           │   ├── ActorService.java
+│       │           │   ├── DirectorService.java
+│       │           │   └── PeliculaService.java
+│       │           ├── repository/
+│       │           │   ├── ActorRepository.java
+│       │           │   ├── DirectorRepository.java
+│       │           │   └── PeliculaRepository.java
+│       │           ├── model/
+│       │           │   ├── Actor.java
+│       │           │   ├── Director.java
+│       │           │   └── Pelicula.java
+│       │           ├── dto/
+│       │           │   ├── ActorRequestDTO.java
+│       │           │   ├── ActorResponseDTO.java
+│       │           │   ├── ActorSimpleDTO.java
+│       │           │   ├── DirectorRequestDTO.java
+│       │           │   ├── DirectorResponseDTO.java
+│       │           │   ├── DirectorSimpleDTO.java
+│       │           │   ├── PeliculaRequestDTO.java
+│       │           │   └── PeliculaResponseDTO.java
+│       │           ├── exception/
+│       │           │   ├── ActorYaEnRepartoException.java
+│       │           │   ├── DirectorMenorEdadException.java
+│       │           │   ├── EntidadNoEncontradaException.java
+│       │           │   ├── GlobalExceptionHandler.java
+│       │           │   └── PeliculaYaExisteException.java
+│       │           └── ApiRestGestionPeliculasApplication.java
+│       └── resources/
+│           └── application.properties
+├── Gestion de Peliculas API.postman_collection.json
+├── pom.xml
+└── README.md
+```
+
+## Inicio Rápido
 
 ### Ejecución
 ```bash
@@ -16,13 +59,13 @@ mvn spring-boot:run
 
 ## URLs de la Aplicación
 
-- La aplicación estará disponible en: http://localhost:9000
+- La aplicación estará disponible en: http://localhost:8080
 
 ### Rutas de Acceso
 
-- API Principal: http://localhost:9000/api/v1
-- Documentación Swagger: http://localhost:9000/swagger-ui.html
-- Consola H2: http://localhost:9000/h2-console
+- API Principal: http://localhost:8080/api/v1
+- Documentación Swagger: http://localhost:8080/swagger-ui.html
+- Consola H2: http://localhost:8080/h2-console
 
 ---
 
@@ -31,21 +74,22 @@ mvn spring-boot:run
 ### Directores
 - GET /api/v1/directores - Listar todos los directores
 - GET /api/v1/directores/{id} - Obtener director por ID
-- POST /api/v1/directores - Crear nuevo director
-- PUT /api/v1/directores/{id} - Actualizar director
-- DELETE /api/v1/directores/{id} - Eliminar director
+- POST /api/v1/directores/create - Crear nuevo director
+- PUT /api/v1/directores/update/{id} - Actualizar director
+- DELETE /api/v1/directores/delete/{id} - Eliminar director
 
 ### Actores
 - GET /api/v1/actores - Listar todos los actores
-- POST /api/v1/actores - Crear nuevo actor
+- GET /api/v1/actores/{id} - Obtener actor por ID
+- POST /api/v1/actores/create - Crear nuevo actor
 
 ### Películas
 - GET /api/v1/peliculas - Listar todas las películas
 - GET /api/v1/peliculas/{id} - Obtener película con reparto
-- POST /api/v1/peliculas - Crear nueva película
-- PUT /api/v1/peliculas/{id} - Actualizar película
-- DELETE /api/v1/peliculas/{id} - Eliminar película
-- POST /api/v1/peliculas/{id}/actores/{actorId} - Asignar actor a película
+- POST /api/v1/peliculas/create - Crear nueva película
+- PUT /api/v1/peliculas/update/{id} - Actualizar película
+- DELETE /api/v1/peliculas/delete/{id} - Eliminar película
+- POST /api/v1/peliculas/assign/{peliculaId}/actores/{actorId} - Asignar actor a película
 
 ---
 
@@ -56,43 +100,7 @@ mvn spring-boot:run
 - JDBC URL: jdbc:h2:mem:testdb
 - Usuario: sa
 - Contraseña: (vacía)
-- Nota: los datos se pierden al reiniciar la aplicación.
-
----
-
-## Tecnologías Utilizadas
-
-- Java 17
-- Spring Boot 3.x
-- Spring Data JPA
-- H2 Database
-- OpenAPI 3.0 + Swagger
-- Maven
-- Lombok
-
----
-
-## Estructura del Proyecto
-
-```text
-gestion-peliculas/
-├── src/
-│   └── main/
-│       ├── java/
-│       │   └── com/
-│       │       └── gestionpeliculas/
-│       │           ├── controller/
-│       │           ├── service/
-│       │           ├── repository/
-│       │           ├── model/
-│       │           ├── dto/
-│       │           └── exceptions/
-│       └── resources/
-│           └── application.properties
-├── postman/
-│   └── GestionPeliculas.postman_collection.json
-└── README.md
-```
+- Nota: La base de datos se reinicia vacía en cada ejecución.
 
 ---
 
@@ -101,7 +109,7 @@ gestion-peliculas/
 ### Crear Director
 
 ```bash
-POST http://localhost:9000/api/v1/directores
+POST http://localhost:8080/api/v1/directores/create
 Content-Type: application/json
 
 {
@@ -113,7 +121,7 @@ Content-Type: application/json
 ### Crear Película
 
 ```bash
-POST http://localhost:9000/api/v1/peliculas
+POST http://localhost:8080/api/v1/peliculas/create
 Content-Type: application/json
 
 {
@@ -148,14 +156,14 @@ Content-Type: application/json
 
 ## Colección Postman
 
-- Incluida en: postman/Gestion de Peliculas API.postman_collection.json
+- Incluida en: Gestion de Peliculas API.postman_collection.json
 
 ---
 
 ## Orden de Pruebas Recomendado
 
-- Crear directores
-- Crear actores
-- Crear películas
-- Asignar actores a películas
-- Probar casos de error
+1. Crear directores
+2. Crear actores
+3. Crear películas
+4. Asignar actores a películas
+5. Probar casos de error
