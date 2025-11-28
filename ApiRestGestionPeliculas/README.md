@@ -12,6 +12,8 @@ Una API REST completa desarrollada con Spring Boot para gestionar un catálogo d
 ### Ejecución
 ```bash
 mvn spring-boot:run
+```
+
 La aplicación estará disponible en: http://localhost:9000
 
 URLs de Acceso
