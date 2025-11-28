@@ -14,9 +14,13 @@ Una API REST completa desarrollada con Spring Boot para gestionar un catálogo d
 mvn spring-boot:run
 ```
 
-La aplicación estará disponible en: http://localhost:9000
+Aplicación Disponible
+
+La aplicación estará disponible en:
+http://localhost:9000
 
 URLs de Acceso
+
 API Principal: http://localhost:9000/api/v1
 
 Documentación Swagger: http://localhost:9000/swagger-ui.html
@@ -25,35 +29,39 @@ Consola H2: http://localhost:9000/h2-console
 
 Endpoints Disponibles
 Directores
-GET /api/v1/directores - Listar todos los directores
 
-GET /api/v1/directores/{id} - Obtener director por ID
+GET /api/v1/directores — Listar todos los directores
 
-POST /api/v1/directores - Crear nuevo director
+GET /api/v1/directores/{id} — Obtener director por ID
 
-PUT /api/v1/directores/{id} - Actualizar director
+POST /api/v1/directores — Crear nuevo director
 
-DELETE /api/v1/directores/{id} - Eliminar director
+PUT /api/v1/directores/{id} — Actualizar director
+
+DELETE /api/v1/directores/{id} — Eliminar director
 
 Actores
-GET /api/v1/actores - Listar todos los actores
 
-POST /api/v1/actores - Crear nuevo actor
+GET /api/v1/actores — Listar todos los actores
+
+POST /api/v1/actores — Crear nuevo actor
 
 Películas
-GET /api/v1/peliculas - Listar todas las películas
 
-GET /api/v1/peliculas/{id} - Obtener película con reparto
+GET /api/v1/peliculas — Listar todas las películas
 
-POST /api/v1/peliculas - Crear nueva película
+GET /api/v1/peliculas/{id} — Obtener película con reparto
 
-PUT /api/v1/peliculas/{id} - Actualizar película
+POST /api/v1/peliculas — Crear nueva película
 
-DELETE /api/v1/peliculas/{id} - Eliminar película
+PUT /api/v1/peliculas/{id} — Actualizar película
 
-POST /api/v1/peliculas/{id}/actores/{actorId} - Asignar actor a película
+DELETE /api/v1/peliculas/{id} — Eliminar película
+
+POST /api/v1/peliculas/{id}/actores/{actorId} — Asignar actor a película
 
 Base de Datos
+
 H2 Database en memoria
 
 JDBC URL: jdbc:h2:mem:testdb
@@ -62,9 +70,10 @@ Usuario: sa
 
 Contraseña: (vacía)
 
-Nota: Los datos se pierden al reiniciar la aplicación.
+ℹ️ Los datos se pierden al reiniciar la aplicación.
 
-Tecnologías
+Tecnologías Usadas
+
 Java 17
 
 Spring Boot 3.x
@@ -80,7 +89,6 @@ Maven
 Lombok
 
 Estructura del Proyecto
-text
 gestion-peliculas/
 ├── src/
 │   └── main/
@@ -98,9 +106,9 @@ gestion-peliculas/
 ├── postman/
 │   └── GestionPeliculas.postman_collection.json
 └── README.md
+
 Ejemplos de Uso
 Crear Director
-bash
 POST http://localhost:9000/api/v1/directores
 Content-Type: application/json
 
@@ -108,8 +116,8 @@ Content-Type: application/json
   "nombre": "Christopher Nolan",
   "anioNacimiento": 1970
 }
+
 Crear Película
-bash
 POST http://localhost:9000/api/v1/peliculas
 Content-Type: application/json
 
@@ -119,17 +127,18 @@ Content-Type: application/json
   "fechaEstreno": "2010-07-16",
   "directorId": 1
 }
+
 Gestión de Errores
+
 La API utiliza ProblemDetail para respuestas de error estandarizadas:
 
-400 Bad Request - Datos inválidos
+400 Bad Request — Datos inválidos
 
-404 Not Found - Recurso no encontrado
+404 Not Found — Recurso no encontrado
 
-409 Conflict - Violación de reglas de negocio
+409 Conflict — Violación de reglas de negocio
 
 Ejemplo de Error
-json
 {
   "type": "about:blank",
   "title": "Entidad No Encontrada",
@@ -137,10 +146,14 @@ json
   "detail": "Película no encontrada",
   "instance": "/api/v1/peliculas/999"
 }
+
 Colección Postman
-Incluida en postman/GestionPeliculas.postman_collection.json
+
+Incluida en:
+postman/GestionPeliculas.postman_collection.json
 
 Orden de Pruebas Recomendado
+
 Crear directores
 
 Crear actores
@@ -150,4 +163,3 @@ Crear películas
 Asignar actores a películas
 
 Probar casos de error
-
