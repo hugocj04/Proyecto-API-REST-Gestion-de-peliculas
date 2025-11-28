@@ -1,6 +1,7 @@
 package com.gestionpeliculas.controller;
 
-import com.gestionpeliculas.dto.ActorDTO;
+import com.gestionpeliculas.dto.ActorRequestDTO;
+import com.gestionpeliculas.dto.ActorResponseDTO;
 import com.gestionpeliculas.service.ActorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,7 +33,7 @@ public class ActorController {
             description = "Lista de actores obtenida correctamente",
             content = @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = ActorDTO.class)),
+                    array = @ArraySchema(schema = @Schema(implementation = ActorResponseDTO.class)),
                     examples = @ExampleObject(
                             value = """
                     [
@@ -53,8 +54,8 @@ public class ActorController {
                     )
             )
     )
-    public ResponseEntity<List<ActorDTO>> getAllActores() {
-        List<ActorDTO> actores = actorService.findAll();
+    public ResponseEntity<List<ActorResponseDTO>> getAllActores() {
+        List<ActorResponseDTO> actores = actorService.findAll();
         return ResponseEntity.ok(actores);
     }
 
@@ -65,7 +66,7 @@ public class ActorController {
             description = "Actor encontrado",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = ActorDTO.class),
+                    schema = @Schema(implementation = ActorResponseDTO.class),
                     examples = @ExampleObject(
                             value = """
                     {
@@ -95,19 +96,19 @@ public class ActorController {
                     )
             )
     )
-    public ResponseEntity<ActorDTO> getActorById(@PathVariable Long id) {
-        ActorDTO actor = actorService.findById(id);
+    public ResponseEntity<ActorResponseDTO> getActorById(@PathVariable Long id) {
+        ActorResponseDTO actor = actorService.findById(id);
         return ResponseEntity.ok(actor);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @Operation(summary = "Crear Actor", description = "Crea un nuevo actor")
     @ApiResponse(
             responseCode = "201",
             description = "Actor creado correctamente",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = ActorDTO.class),
+                    schema = @Schema(implementation = ActorResponseDTO.class),
                     examples = @ExampleObject(
                             value = """
                     {
@@ -137,13 +138,13 @@ public class ActorController {
                     )
             )
     )
-    public ResponseEntity<ActorDTO> createActor(
+    public ResponseEntity<ActorResponseDTO> createActor(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     description = "Datos del actor a crear",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ActorDTO.class),
+                            schema = @Schema(implementation = ActorRequestDTO.class),
                             examples = @ExampleObject(
                                     value = """
                         {
@@ -153,10 +154,9 @@ public class ActorController {
                             )
                     )
             )
-            @RequestBody ActorDTO actorDTO
+            @RequestBody ActorRequestDTO actorRequestDTO
     ) {
-        ActorDTO nuevoActor = actorService.create(actorDTO);
+        ActorResponseDTO nuevoActor = actorService.create(actorRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoActor);
     }
-
 }

@@ -1,11 +1,13 @@
 package com.gestionpeliculas.service;
 
-import com.gestionpeliculas.dto.ActorDTO;
+import com.gestionpeliculas.dto.ActorRequestDTO;
+import com.gestionpeliculas.dto.ActorResponseDTO;
+import com.gestionpeliculas.dto.ActorSimpleDTO;
+import com.gestionpeliculas.exception.EntidadNoEncontradaException;
 import com.gestionpeliculas.model.Actor;
 import com.gestionpeliculas.repository.ActorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -14,28 +16,25 @@ public class ActorService {
 
     private final ActorRepository actorRepository;
 
-    public List<ActorDTO> findAll() {
+    public List<ActorResponseDTO> findAll() {
         return actorRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(ActorResponseDTO::of)
                 .toList();
     }
 
-    public ActorDTO findById(Long id) {
+    public ActorResponseDTO findById(Long id) {
         Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Actor no encontrado"));
-
-        return convertToDTO(actor);
+                .orElseThrow(() -> new EntidadNoEncontradaException("Actor no encontrado"));
+        return ActorResponseDTO.of(actor);
     }
 
-    public ActorDTO create(ActorDTO actorDTO) {
-        Actor actor = new Actor();
-        actor.setNombre(actorDTO.nombre());
-
+    public ActorResponseDTO create(ActorRequestDTO actorRequestDTO) {
+        Actor actor = actorRequestDTO.toEntity();
         Actor savedActor = actorRepository.save(actor);
-        return convertToDTO(savedActor);
+        return ActorResponseDTO.of(savedActor);
     }
 
-    private ActorDTO convertToDTO(Actor actor) {
-        return new ActorDTO(actor.getId(), actor.getNombre());
+    ActorSimpleDTO convertToSimpleDTO(Actor actor) {
+        return ActorSimpleDTO.of(actor);
     }
 }

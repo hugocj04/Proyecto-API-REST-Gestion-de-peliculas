@@ -1,6 +1,8 @@
 package com.gestionpeliculas.service;
 
-import com.gestionpeliculas.dto.DirectorDTO;
+import com.gestionpeliculas.dto.DirectorRequestDTO;
+import com.gestionpeliculas.dto.DirectorResponseDTO;
+import com.gestionpeliculas.dto.DirectorSimpleDTO;
 import com.gestionpeliculas.exception.EntidadNoEncontradaException;
 import com.gestionpeliculas.model.Director;
 import com.gestionpeliculas.repository.DirectorRepository;
@@ -14,47 +16,39 @@ public class DirectorService {
 
     private final DirectorRepository directorRepository;
 
-    public List<DirectorDTO> findAll() {
+    public List<DirectorResponseDTO> findAll() {
         return directorRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(DirectorResponseDTO::of)
                 .toList();
     }
 
-    public DirectorDTO findById(Long id) {
+    public DirectorResponseDTO findById(Long id) {
         Director director = directorRepository.findById(id)
                 .orElseThrow(() -> new EntidadNoEncontradaException("Director no encontrado"));
-        return convertToDTO(director);
+        return DirectorResponseDTO.of(director);
     }
 
-    public DirectorDTO create(DirectorDTO directorDTO) {
-        Director director = new Director();
-        director.setNombre(directorDTO.nombre());
-        director.setAnioNacimiento(directorDTO.anioNacimiento());
-
+    public DirectorResponseDTO create(DirectorRequestDTO directorRequestDTO) {
+        Director director = directorRequestDTO.toEntity();
         Director savedDirector = directorRepository.save(director);
-        return convertToDTO(savedDirector);
+        return DirectorResponseDTO.of(savedDirector);
     }
 
-    public DirectorDTO update(Long id, DirectorDTO directorDTO) {
+    public DirectorResponseDTO update(Long id, DirectorRequestDTO directorRequestDTO) {
         Director director = directorRepository.findById(id)
                 .orElseThrow(() -> new EntidadNoEncontradaException("Director no encontrado"));
 
-        director.setNombre(directorDTO.nombre());
-        director.setAnioNacimiento(directorDTO.anioNacimiento());
+        director.setNombre(directorRequestDTO.nombre());
+        director.setAnioNacimiento(directorRequestDTO.anioNacimiento());
 
         Director updatedDirector = directorRepository.save(director);
-        return convertToDTO(updatedDirector);
+        return DirectorResponseDTO.of(updatedDirector);
     }
 
     public void delete(Long id) {
-        if (!directorRepository.existsById(id)) {
-            throw new EntidadNoEncontradaException("Director no encontrado");
-        }
+        Director director = directorRepository.findById(id)
+                .orElseThrow(() -> new EntidadNoEncontradaException("Director no encontrado"));
 
-        directorRepository.deleteById(id);
-    }
-
-    private DirectorDTO convertToDTO(Director director) {
-        return new DirectorDTO(director.getId(), director.getNombre(), director.getAnioNacimiento());
+        directorRepository.delete(director);
     }
 }

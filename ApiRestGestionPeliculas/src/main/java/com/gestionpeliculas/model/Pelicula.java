@@ -2,7 +2,6 @@ package com.gestionpeliculas.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +18,16 @@ public class Pelicula {
     private String genero;
     private LocalDate fechaEstreno;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id")
     private Director director;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "pelicula_actor",
             joinColumns = @JoinColumn(name = "pelicula_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
-
     private List<Actor> actores = new ArrayList<>();
 
     public void addActor(Actor actor) {

@@ -1,7 +1,7 @@
 package com.gestionpeliculas.service;
 
-import com.gestionpeliculas.dto.ActorDTO;
-import com.gestionpeliculas.dto.DirectorDTO;
+import com.gestionpeliculas.dto.ActorSimpleDTO;
+import com.gestionpeliculas.dto.DirectorSimpleDTO;
 import com.gestionpeliculas.dto.PeliculaRequestDTO;
 import com.gestionpeliculas.dto.PeliculaResponseDTO;
 import com.gestionpeliculas.exception.ActorYaEnRepartoException;
@@ -30,14 +30,14 @@ public class PeliculaService {
 
     public List<PeliculaResponseDTO> findAll() {
         return peliculaRepository.findAll().stream()
-            .map(this::convertToResponseDTO)
-            .toList();
+                .map(PeliculaResponseDTO::of)
+                .toList();
     }
 
     public PeliculaResponseDTO findById(Long id) {
         Pelicula pelicula = peliculaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Pelicula no encontrada"));
-        return convertToResponseDTO(pelicula);
+                .orElseThrow(() -> new EntidadNoEncontradaException("Pelicula no encontrada"));
+        return PeliculaResponseDTO.of(pelicula);
     }
 
     @Transactional
@@ -62,14 +62,14 @@ public class PeliculaService {
         pelicula.setDirector(director);
 
         Pelicula savedPelicula = peliculaRepository.save(pelicula);
-        return convertToResponseDTO(savedPelicula);
+        return PeliculaResponseDTO.of(savedPelicula);
     }
 
     @Transactional
     public PeliculaResponseDTO update(Long id, PeliculaRequestDTO peliculaRequestDTO) {
         int edadDirector;
         Pelicula pelicula = peliculaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pelicula no encontrada"));
+                .orElseThrow(() -> new EntidadNoEncontradaException("Pelicula no encontrada"));
 
         if (!pelicula.getTitulo().equals(peliculaRequestDTO.titulo()) &&
                 peliculaRepository.existsByTitulo(peliculaRequestDTO.titulo())) {
@@ -90,12 +90,12 @@ public class PeliculaService {
         pelicula.setDirector(director);
 
         Pelicula updatedPelicula = peliculaRepository.save(pelicula);
-        return convertToResponseDTO(updatedPelicula);
+        return PeliculaResponseDTO.of(updatedPelicula);
     }
 
     public void delete(Long id) {
         if (!peliculaRepository.existsById(id)) {
-            throw new RuntimeException("Pelicula no encontrada");
+            throw new EntidadNoEncontradaException("Pelicula no encontrada");
         }
         peliculaRepository.deleteById(id);
     }
@@ -103,37 +103,15 @@ public class PeliculaService {
     @Transactional
     public void asignarActorAPelicula(Long peliculaId, Long actorId) {
         Pelicula pelicula = peliculaRepository.findById(peliculaId)
-                .orElseThrow(() -> new EntidadNoEncontradaException("Pelicula no encontrada"));
+                .orElseThrow(() -> new EntidadNoEncontradaException("Película no encontrada"));
 
         Actor actor = actorRepository.findById(actorId)
                 .orElseThrow(() -> new EntidadNoEncontradaException("Actor no encontrado"));
 
         if (pelicula.getActores().contains(actor)) {
-            throw new ActorYaEnRepartoException("El actor ya está en el reparto de esta pelicula");
+            throw new ActorYaEnRepartoException("El actor ya está en el reparto de esta película");
         }
 
         pelicula.addActor(actor);
-        peliculaRepository.save(pelicula);
-    }
-
-    private PeliculaResponseDTO convertToResponseDTO(Pelicula pelicula) {
-        DirectorDTO directorDTO = new DirectorDTO(
-                pelicula.getDirector().getId(),
-                pelicula.getDirector().getNombre(),
-                pelicula.getDirector().getAnioNacimiento()
-        );
-
-        List<ActorDTO> actoresDTO = pelicula.getActores().stream()
-                .map(actor -> new ActorDTO(actor.getId(), actor.getNombre()))
-                .toList();
-
-        return new PeliculaResponseDTO(
-                pelicula.getId(),
-                pelicula.getTitulo(),
-                pelicula.getGenero(),
-                pelicula.getFechaEstreno(),
-                directorDTO,
-                actoresDTO
-        );
     }
 }

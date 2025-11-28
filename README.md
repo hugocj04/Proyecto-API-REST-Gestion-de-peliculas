@@ -148,7 +148,7 @@ Content-Type: application/json
 
 ## Colección Postman
 
-- Incluida en: postman/GestionPeliculas.postman_collection.json
+- Incluida en: postman/Gestion de Peliculas API.postman_collection.json
 
 ---
 

@@ -123,7 +123,7 @@ public class PeliculaController {
         return ResponseEntity.ok(pelicula);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @Operation(summary = "Crear Película", description = "Crea una nueva película. Requiere el ID de un director existente")
     @ApiResponse(
             responseCode = "201",
@@ -231,7 +231,7 @@ public class PeliculaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPelicula);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @Operation(summary = "Actualizar película", description = "Actualiza los datos de una película existente")
     @ApiResponse(
             responseCode = "200",
@@ -302,7 +302,7 @@ public class PeliculaController {
         return ResponseEntity.ok(peliculaActualizada);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = "Eliminar película", description = "Elimina una película existente")
     @ApiResponse(
             responseCode = "204",
@@ -332,7 +332,7 @@ public class PeliculaController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{peliculaId}/actores/{actorId}")
+    @PostMapping("/assign/{peliculaId}/actores/{actorId}")
     @Operation(summary = "Asignar actor a película", description = "Asigna un actor al reparto de una película")
     @ApiResponse(
             responseCode = "200",

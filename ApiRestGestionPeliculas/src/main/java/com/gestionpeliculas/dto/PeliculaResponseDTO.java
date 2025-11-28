@@ -1,5 +1,7 @@
 package com.gestionpeliculas.dto;
 
+import com.gestionpeliculas.model.Pelicula;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -8,12 +10,18 @@ public record PeliculaResponseDTO(
         String titulo,
         String genero,
         LocalDate fechaEstreno,
-        DirectorDTO director,
-        List<ActorDTO> actores
+        DirectorSimpleDTO director,
+        List<ActorSimpleDTO> actores
 ) {
-    public PeliculaResponseDTO {
-        if (actores == null) {
-            actores = List.of();
-        }
-    }
-}
+    public static PeliculaResponseDTO of(Pelicula pelicula) {
+        return new PeliculaResponseDTO(
+                pelicula.getId(),
+                pelicula.getTitulo(),
+                pelicula.getGenero(),
+                pelicula.getFechaEstreno(),
+                DirectorSimpleDTO.of(pelicula.getDirector()),
+                pelicula.getActores().stream()
+                        .map(ActorSimpleDTO::of)
+                        .toList()
+        );
+    }}

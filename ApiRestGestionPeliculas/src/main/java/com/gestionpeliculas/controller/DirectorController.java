@@ -1,6 +1,8 @@
 package com.gestionpeliculas.controller;
 
-import com.gestionpeliculas.dto.DirectorDTO;
+import com.gestionpeliculas.dto.DirectorRequestDTO;
+import com.gestionpeliculas.dto.DirectorResponseDTO;
+import com.gestionpeliculas.dto.DirectorSimpleDTO;
 import com.gestionpeliculas.service.DirectorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -8,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class DirectorController {
             description = "Lista de directores obtenida correctamente",
             content = @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = DirectorDTO.class)),
+                    array = @ArraySchema(schema = @Schema(implementation = DirectorResponseDTO.class)),
                     examples = @ExampleObject(
                             value = """
                     [
@@ -52,8 +53,8 @@ public class DirectorController {
                     )
             )
     )
-    public ResponseEntity<List<DirectorDTO>> getAllDirectores() {
-        List<DirectorDTO> directores = directorService.findAll();
+    public ResponseEntity<List<DirectorResponseDTO>> getAllDirectores() {
+        List<DirectorResponseDTO> directores = directorService.findAll();
         return ResponseEntity.ok(directores);
     }
 
@@ -64,7 +65,7 @@ public class DirectorController {
             description = "Director encontrado",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = DirectorDTO.class),
+                    schema = @Schema(implementation = DirectorResponseDTO.class),
                     examples = @ExampleObject(
                             value = """
                     {
@@ -95,19 +96,19 @@ public class DirectorController {
                     )
             )
     )
-    public ResponseEntity<DirectorDTO> getDirectorById(@PathVariable Long id) {
-        DirectorDTO director = directorService.findById(id);
+    public ResponseEntity<DirectorResponseDTO> getDirectorById(@PathVariable Long id) {
+        DirectorResponseDTO director = directorService.findById(id);
         return ResponseEntity.ok(director);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @Operation(summary = "Crear Director", description = "Crea un nuevo director")
     @ApiResponse(
             responseCode = "201",
             description = "Director creado correctamente",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = DirectorDTO.class),
+                    schema = @Schema(implementation = DirectorResponseDTO.class),
                     examples = @ExampleObject(
                             value = """
                     {
@@ -138,13 +139,13 @@ public class DirectorController {
                     )
             )
     )
-    public ResponseEntity<DirectorDTO> createDirector(
+    public ResponseEntity<DirectorResponseDTO> createDirector(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     description = "Datos del director a crear",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DirectorDTO.class),
+                            schema = @Schema(implementation = DirectorRequestDTO.class),
                             examples = @ExampleObject(
                                     value = """
                         {
@@ -155,20 +156,20 @@ public class DirectorController {
                             )
                     )
             )
-            @RequestBody DirectorDTO directorDTO
+            @RequestBody DirectorRequestDTO directorRequestDTO
     ) {
-        DirectorDTO nuevoDirector = directorService.create(directorDTO);
+        DirectorResponseDTO nuevoDirector = directorService.create(directorRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoDirector);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @Operation(summary = "Actualizar director", description = "Actualiza los datos de un director existente")
     @ApiResponse(
             responseCode = "200",
             description = "Director actualizado correctamente",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = DirectorDTO.class),
+                    schema = @Schema(implementation = DirectorResponseDTO.class),
                     examples = @ExampleObject(
                             value = """
                     {
@@ -199,14 +200,14 @@ public class DirectorController {
                     )
             )
     )
-    public ResponseEntity<DirectorDTO> updateDirector(
+    public ResponseEntity<DirectorResponseDTO> updateDirector(
             @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     description = "Datos actualizados del director",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DirectorDTO.class),
+                            schema = @Schema(implementation = DirectorRequestDTO.class),
                             examples = @ExampleObject(
                                     value = """
                         {
@@ -217,13 +218,13 @@ public class DirectorController {
                             )
                     )
             )
-            @RequestBody DirectorDTO directorDTO
+            @RequestBody DirectorRequestDTO directorRequestDTO
     ) {
-        DirectorDTO directorActualizado = directorService.update(id, directorDTO);
+        DirectorResponseDTO directorActualizado = directorService.update(id, directorRequestDTO);
         return ResponseEntity.ok(directorActualizado);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = "Eliminar director", description = "Elimina un director existente")
     @ApiResponse(
             responseCode = "204",
@@ -252,5 +253,4 @@ public class DirectorController {
         directorService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
